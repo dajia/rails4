@@ -1,7 +1,7 @@
 class Section < ActiveRecord::Base
 	has_many :section_edits
 	has_many :editors, :through => :section_edits, :class_name => "AdminUser"
-		
+
 	CONTENT_TYPES = ['text', 'HTML']
 
 	#simple validations
@@ -14,14 +14,14 @@ class Section < ActiveRecord::Base
 
 	#sexy validations/ shortcut validations
 
-	#sexy validations calling the exact same things as above behind 
+	#sexy validations calling the exact same things as above behind
 	#the scenes, we just write less code and it is easiest to read
 
 
-	validates :name, :presence => true
+	validates :name, :presence => true,
 					 :length => {:maximum => 255}
-	validates :content_type, :inclusion => CONTENT_TYPES	
-	validates :content, :presence => true			 
+	validates :content_type, :inclusion => CONTENT_TYPES
+	validates :content, :presence => true
 
 
 

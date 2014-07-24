@@ -21,7 +21,7 @@ has_many :pages
 #the scenes, we just write less code and it is easiest to read
 
 
-validates :name, :presence => true
+validates :name, :presence => true,
 				 :length => {:maximum => 255}
 
 

@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 20140723143437) do
   create_table "pages", force: true do |t|
     t.integer  "subject_id"
     t.string   "name",       limit: 50
-    t.integer  "permalink"
+    t.string   "permalink"
     t.integer  "posistion"
     t.boolean  "visible",               default: false
     t.datetime "created_at"
