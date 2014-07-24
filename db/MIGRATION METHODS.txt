@@ -1,0 +1,50 @@
+TABLE Migration Methods
+
+create_table(table name, options) do |t|
+	/*create columns here*/
+end
+
+drop_table(table name)
+
+rename_table(current table name, new table name)
+
+
+COLUMN Migration Methods
+
+add_column(table name, column name, type of data that except the new column, options)
+
+remove_column(table name, column name)
+
+rename_column(table name, current column name, new column name)
+
+change_column(table name, column name, type of data that except the column, options) -> όταν θελουμε να αλλάξουμε καποιο χαρακτιριστικο της στηλης, χωρις να καταστρεψουμε τα δεδομενα που ήδη εχει. πρεπει να αναφερουμε όλες τις παραμετρους, ακομα και αυτες που θα παραμεινουν οι ιδιες.
+
+
+OPTIONS
+
+      		:limit => size
+      		:default => value
+      		:null => true/false
+
+      		:precision => number
+      		:scale => number
+
+
+INDEX Migration Methods
+
+add_index(table name, column name, options) 
+remove_index(table name, column name) 
+
+αν θελω να χρησιμοποιήσω κάποια από τις δυο για περισσότερες απο μια στήλες, τότε αντι γα το column name βάζω μια array η οποια θα περιεχει όλα τα column name των στηλων αυτων.
+
+OPTIONS
+
+      		:unique => true/false
+      		:name => "custom_name"
+
+
+EXECUTE Migration Method
+
+execute("any SQL string") 
+
+We can pass in any SQL string to execute, and it will send it directly to my SQL. Just raw SQL straight to the data base. If your an SQL pro, who wants to use advanced SQL settings You can use execute to do those. Or if you have a legacy table schema already in sql format.     		

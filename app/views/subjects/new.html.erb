@@ -1,0 +1,14 @@
+<% @page_title = "New Subject"%>
+<%= link_to("Back to List", {:action => "index"}, :class => 'back-link')%>
+<div class="subjects new">
+	<h2>Create Subject</h2>
+	<%= form_for(:subject, :url => {:action => "create"}) do |f| %>
+		<%= render(:partial => "form", :locals => {:f => f}) %>
+		<%# = the above assums that form file is in the same directory as this one%> 
+		<%#= render(:partial => "subjects/form", :locals => {:f => f}) %>
+		<%# = above, the form file is not in the same directory as this file so i givea full path to that file%> 
+
+	<%= submit_tag("Create Subject") %>
+	<% end %>	
+</div>
+	

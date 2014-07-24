@@ -1,0 +1,29 @@
+DELETING MODELS
+
+
+Find/Destroy
+
+Find record
+Destroy
+
+Subject.create(:name => "Bad Subject")->δημιουργώ ενα object το οποιο δεν το κανω assign πουθενα
+
+INSERT INTO `subjects` (`created_at`, `name`, `updated_at`) VALUES ('2014-07-10 13:41:22', 'Bad Subject', '2014-07-10 13:41:22')
+   
+=> #<Subject id: 3, name: "Bad Subject", posistion: nil, visible: false, created_at: "2014-07-10 13:41:22", updated_at: "2014-07-10 13:41:22">
+
+
+subject = Subject.find(3)-> το ψαχνω και ταυτοχρονα το κανω assign σε ενα variable
+SELECT  `subjects`.* FROM `subjects`  WHERE `subjects`.`id` = 3 LIMIT 1
+
+=> #<Subject id: 3, name: "Bad Subject", posistion: nil, visible: false, created_at: "2014-07-10 13:41:22", updated_at: "2014-07-10 13:41:22">
+
+
+subject.destroy -> το διαγραφω
+  SQL (0.7ms)  DELETE FROM `subjects` WHERE `subjects`.`id` = 3
+
+=> #<Subject id: 3, name: "Bad Subject", posistion: nil, visible: false, created_at: "2014-07-10 13:41:22", updated_at: "2014-07-10 13:41:22">
+
+
+Το destroy επιστρεφει την εγγραφη σε μας. Η διαγραφή που καναμε εγινε στην βαση, αλλά το object ειναι ακομα διαθέσιμο για inspection, δεν διαγραφηκε. Ειναι "παγωμενη", δεν μπορω να εχω προσβαση σε αυτην την εγγραφη, αλλα μπορω να αναφερομαι σε αυτη. 
+Βεβαια δεν μπορουμε να την τροποποιήσουμε

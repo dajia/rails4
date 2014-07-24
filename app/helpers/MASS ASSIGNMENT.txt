@@ -1,0 +1,49 @@
+MASS ASSIGNMENT AND STRONG PARAMETERS
+
+
+
+Mass assignment -> we can pass a hash of values to an object to be assigned as attributes
+
+Primary methods that do this are
+
+new
+Subject.new(params[:subject])
+
+create
+Subject.create(params[:subject])
+
+update
+Subject.update_at(params[:subject])
+
+
+
+Simple one-to-one assignment:
+
+subject = Subject.new
+subject.name = "Dajia"
+subject.position = 8
+subject.visible = true
+
+Mass assignment:
+
+subject = Subject.new({:name => "Dajia", :position => 1, :visible => true})
+BUT this occurs security issues
+
+
+Blacklisting for assignment -> everythink is available/allowed by default -> no security
+
+Whitelisting for assignment -> everythink is not available/disallowed by default
+
+Blacklisting and Whitelisting could turn on or off whith a simple configuration
+
+
+Strong Parameters:
+So rails 4 uses strong parameters that can not be turn on or off with a configuration. The are on by default (means that all attributes are disallowed by default). All values are unavailable, so we must specify the values that we want to be available.
+
+For set attributes to be allowed for mass assignment, we use the .permit
+
+For defining them in rails we use .permit()
+
+also strong parameters gives us .require. Το .require διασφαλιζει οτι η παραμετρος υπάρχει
+
+params.require(:subject).permit(:name, :position, :visible)

@@ -1,0 +1,406 @@
+
+
+---------------------
+One-to-one relationship/associations
+---------------------
+
+Classroom has_one :teacher
+
+Teacher belongs_to :classroom
+
+
+Always define both sides of the relationship 
+
+	create_subject migration file -> has_one :page
+
+	create_page migration file -> belongs_to :subject
+
+	SOS!!!
+	Class with "Belongs_to" should have the foreign key
+
+usage:
+------
+
+*Unique items a person or thing can have only one
+
+	Employee has_one :office
+	Student has_one :id_card
+
+*Sometimes used to break up a single table
+
+	Customer has_one :billing_address (but we want to have all billing addresses in one table)
+
+
+
+subject = Subject.find(1)
+  Subject Load (2.1ms)  SELECT  `subjects`.* FROM `subjects`  WHERE `subjects`.`id` = 1 LIMIT 1
+=> #<Subject id: 1, name: "Initial Subject", posistion: 1, visible: true, created_at: "2014-07-10 12:01:42", updated_at: "2014-07-10 13:14:24">
+
+subject.page
+  Page Load (1.1ms)  SELECT  `pages`.* FROM `pages`  WHERE `pages`.`subject_id` = 1 LIMIT 1  ----> this ties to find the page matching the subject's id of page with the Subject id of the subject that we are looking for.
+=> nil
+
+
+first_page = Page.new ---> δημιουργεί μια νεα page χωρις όμως page id, γιατι δεν εχει αποθηκευτει καπου, και χωρις subject id, δεν συνδέεται δηλασή με τιποτα, ακομα.
+
+=> #<Page id: nil, subject_id: nil, name: nil, permalink: nil, posistion: nil, visible: false, created_at: nil, updated_at: nil>
+
+subject.page = first_page ---> αποθηκευω την νεα σελιδα και την συνδεω με το Subject model/object. Παιρνει page id, αλλα και subject id.
+
+   (0.2ms)  BEGIN
+  SQL (12.8ms)  INSERT INTO `pages` (`created_at`, `subject_id`, `updated_at`) VALUES ('2014-07-15 08:40:02', 1, '2014-07-15 08:40:02')
+   (0.5ms)  COMMIT
+=> #<Page id: 1, subject_id: 1, name: nil, permalink: nil, posistion: nil, visible: false, created_at: "2014-07-15 08:40:02", updated_at: "2014-07-15 08:40:02">
+irb(main):005:0> 
+
+
+first_page.subject ---> Ρωταω ποιο ειναι το subject της fisrt_page
+
+=> #<Subject id: 1, name: "Initial Subject", posistion: 1, visible: true, created_at: "2014-07-10 12:01:42", updated_at: "2014-07-10 13:14:24">
+
+subject.page = nil ---> θα ακυρωναμε την συνδεση μεταξυ page και subject. δεν θα διαγραφαμε την page.
+
+subject.page.destroy ---> η σελιδα δεν διαγραφεται οριστικα, απλα ειναι σε μια παγωμενη κατασταση, την εχουμε, αλλα δεν μπορουμε να εχουμε προσβαση και να την επεξεργαστουμε.
+
+subject.page(true) ---> θα κενει reload  thn σελιδα που παγωσαμε.
+
+
+--------------------------------------
+One-to-many relationship/associations
+--------------------------------------
+
+Teacher has_many :courses
+
+Courses belongs_to :teacher
+
+
+Returns an array of object (not a single object)
+
+
+
+
+Always define both sides of the relationship 
+
+	create_subject migration file -> has_many :pages
+
+	create_page migration file -> belongs_to :subject
+
+	SOS!!!
+	Class with "Belongs_to" should have the foreign key
+
+usage:
+------
+
+*An object has many objects wich belong to it exclusively
+
+	Photographer has_many :photographs
+	Photographs belongs_to :photographer
+
+	Subject has_many :pages
+	Page boleongs_to :subject
+
+
+has_many Methods:
+------------------
+
+subject.pages--> this returns an array
+
+subject.pages << page --> add a page in the pages array
+
+subject.pages = [page, page, page] --> specify the pages array
+
+subject.pages.delete(page) --> removes the page from the array
+
+subject.pages.destroy(page) --> deletes the page from the database, not only the array
+
+subject.pages.clear --> deletes all the pages of the array
+
+subject.pages.empty? --> check if the array is empty
+
+subject.pages.size --> givesthe size of the array
+
+
+subject = Subject.find(1) --> we pick the subject with an id of 1
+  Subject Load (0.4ms)  SELECT  `subjects`.* FROM `subjects`  WHERE `subjects`.`id` = 1 LIMIT 1
+
+=> #<Subject id: 1, name: "Initial Subject", posistion: 1, visible: true, created_at: "2014-07-10 12:01:42", updated_at: "2014-07-10 13:14:24">
+
+
+subject.pages --> this gives us an empty array
+  Page Load (1.0ms)  SELECT `pages`.* FROM `pages`  WHERE `pages`.`subject_id` = 1
+
+=> #<ActiveRecord::Associations::CollectionProxy [#<Page id: 2, subject_id: 1, name: "First Page", permalink: 0, posistion: 1, visible: false, created_at: "2014-07-15 09:01:24", updated_at: "2014-07-15 09:01:24">]>
+
+
+first_page = Page.new(:name => "First page", :permalink => "first", :posistion => 1) --> we create a subject
+
+=> #<Page id: nil, subject_id: nil, name: "First page", permalink: 0, posistion: 1, visible: false, created_at: nil, updated_at: nil>
+
+
+subject.pages << first_page  --> add that page to subject array
+   (0.7ms)  BEGIN
+  SQL (0.5ms)  INSERT INTO `pages` (`created_at`, `name`, `permalink`, `posistion`, `subject_id`, `updated_at`) VALUES ('2014-07-15 09:37:51', 'First page', 0, 1, 1, '2014-07-15 09:37:51')
+   (2.6ms)  COMMIT
+
+=> #<ActiveRecord::Associations::CollectionProxy [#<Page id: 2, subject_id: 1, name: "First Page", permalink: 0, posistion: 1, visible: false, created_at: "2014-07-15 09:01:24", updated_at: "2014-07-15 09:01:24">, #<Page id: 3, subject_id: 1, name: "First page", permalink: 0, posistion: 1, visible: false, created_at: "2014-07-15 09:37:51", updated_at: "2014-07-15 09:37:51">]>
+
+subject.pages --> gives us the array with all the pages associated with subject with subject id 1 
+
+=> #<ActiveRecord::Associations::CollectionProxy [#<Page id: 2, subject_id: 1, name: "First Page", permalink: 0, posistion: 1, visible: false, created_at: "2014-07-15 09:01:24", updated_at: "2014-07-15 09:01:24">, #<Page id: 3, subject_id: 1, name: "First page", permalink: 0, posistion: 1, visible: false, created_at: "2014-07-15 09:37:51", updated_at: "2014-07-15 09:37:51">, #<Page id: 4, subject_id: 1, name: "Second page", permalink: 0, posistion: 2, visible: false, created_at: "2014-07-15 09:39:59", updated_at: "2014-07-15 09:39:59">, #<Page id: 5, subject_id: 1, name: "Third page", permalink: 0, posistion: 3, visible: false, created_at: "2014-07-15 09:40:46", updated_at: "2014-07-15 09:40:46">]>
+irb(main):010:0> 
+
+subject.pages.delete(first_page)
+   (0.7ms)  BEGIN
+  SQL (13.0ms)  UPDATE `pages` SET `pages`.`subject_id` = NULL WHERE `pages`.`subject_id` = 1 AND `pages`.`id` IN (3)
+   (6.2ms)  COMMIT
+=> [#<Page id: 3, subject_id: 1, name: "First page", permalink: 0, posistion: 1, visible: false, created_at: "2014-07-15 09:37:51", updated_at: "2014-07-15 09:37:51">]
+
+
+subject.pages.where(:visible => true) --> find all pages of that subject that are visible
+  Page Load (0.6ms)  SELECT `pages`.* FROM `pages`  WHERE `pages`.`subject_id` = 1 AND `pages`.`visible` = 1
+
+=> #<ActiveRecord::AssociationRelation []>
+
+
+subject.pages.where(:visible 
+=> false) --> find all pages of that subject that are not visible
+  Page Load (0.6ms)  SELECT `pages`.* FROM `pages`  WHERE `pages`.`subject_id` = 1 AND `pages`.`visible` = 0
+
+=> #<ActiveRecord::AssociationRelation [#<Page id: 2, subject_id: 1, name: "First Page", permalink: 0, posistion: 1, visible: false, created_at: "2014-07-15 09:01:24", updated_at: "2014-07-15 09:01:24">, #<Page id: 4, subject_id: 1, name: "Second page", permalink: 0, posistion: 2, visible: false, created_at: "2014-07-15 09:39:59", updated_at: "2014-07-15 09:39:59">, #<Page id: 5, subject_id: 1, name: "Third page", permalink: 0, posistion: 3, visible: false, created_at: "2014-07-15 09:40:46", updated_at: "2014-07-15 09:40:46">]>
+
+
+--------------------------------------
+Many-to-many relationship/associations -- SIMPLE (join table)
+---------------------------------------
+Course has_and_belongs_to_many :students
+
+Student has_and_belongs_to_many :courses
+
+
+usage:
+------
+
+*An object has many objects wich belong to it but not exclusively
+
+Project has_and_belongs_to_many :collaborators
+
+Collaborator has_and_belongs_to_many :projects
+
+for a many_to_may relationship, a join table is required
+
+We have two foreign keys 
+we write index to index both foreign keys
+
+We don't have a primary key column (:id => false)
+
+
+
+has_and_belongs_to_many Methods:
+---------------------------------
+
+subject.pages--> this returns an array
+
+subject.pages << page --> add a page in the pages array
+
+subject.pages = [page, page, page] --> specify the pages array
+
+subject.pages.delete(page) --> removes the page from the array
+
+subject.pages.destroy(page) --> deletes the page from the database, not only the array
+
+subject.pages.clear --> deletes all the pages of the array
+
+subject.pages.empty? --> check if the array is empty
+
+subject.pages.size --> givesthe size of the array
+
+
+
+Must create the join table that will handles this relationship. We create a migration file
+
+ruby's naming convensio for joi table
+
+	*first_table +_+ second_table
+
+	*both table names are plural 
+
+	*alphabetical order
+
+admin_users_pages
+
+add an index in that migration file
+
+generate the migration rails generate migration CreateAdminUsersPagesJoin
+
+then run the migration rake db:migrate
+
+then add the relationship in the model
+
+Always define both sides of the relationship 
+
+	admin_user model file -> has_and_belongs_to_many :pages
+
+	page model file -> has_and_belongs_to_many :editors
+
+	--because a pages by convention has editors to edit it, we don't use 
+	the :admin_users. Instead we use the role, :editors, and we set :editors, to inherit from class AdminUsers. So when we talk about editors, we talk about admin users, because the editors class (model) does not (pre-)exist
+
+
+then in the command line
+
+page = Page.find(2) --> we pick a page
+  Page Load (0.4ms)  SELECT  `pages`.* FROM `pages`  WHERE `pages`.`id` = 2 LIMIT 1
+=> #<Page id: 2, subject_id: 1, name: "First Page", permalink: 0, posistion: 1, visible: false, created_at: "2014-07-15 09:01:24", updated_at: "2014-07-15 09:01:24">
+
+page.editors --> we are looking for page's editors, it returns to us an empty array
+
+  AdminUser Load (0.6ms)  SELECT `admin_users`.* FROM `admin_users` INNER JOIN `admin_users_pages` ON `admin_users`.`id` = `admin_users_pages`.`admin_user_id` WHERE `admin_users_pages`.`page_id` = 2
+=> #<ActiveRecord::Associations::CollectionProxy []>
+
+
+AdminUser.all --> creates an empty array that has no items in it, no editors
+
+  AdminUser Load (1.0ms)  SELECT `admin_users`.* FROM `admin_users`
+=> #<ActiveRecord::Relation []>
+
+me = AdminUser.create(:first_name => "Dajia", :last_name => "Dim", :username => "DajiaDim")  --> create an user
+
+   (0.3ms)  BEGIN
+  SQL (1.2ms)  INSERT INTO `admin_users` (`created_at`, `first_name`, `last_name`, `updated_at`, `username`) VALUES ('2014-07-15 10:55:48', 'Dajia', 'Dim', '2014-07-15 10:55:48', 'DajiaDim')
+   (0.4ms)  COMMIT
+
+=> #<AdminUser id: 1, first_name: "Dajia", last_name: "Dim", email: "", username: "DajiaDim", hashed_password: nil, created_at: "2014-07-15 10:55:48", updated_at: "2014-07-15 10:55:48">
+
+
+page.editors << me --> add that user to the page that i had picked
+   (0.8ms)  BEGIN
+  SQL (0.4ms)  INSERT INTO `admin_users_pages` (`admin_user_id`, `page_id`) VALUES (1, 2)
+   (2.2ms)  COMMIT
+=> #<ActiveRecord::Associations::CollectionProxy [#<AdminUser id: 1, first_name: "Dajia", last_name: "Dim", email: "", username: "DajiaDim", hashed_password: nil, created_at: "2014-07-15 10:55:48", updated_at: "2014-07-15 10:55:48">]>
+
+
+ me.pages --> this will give all the pages that that user can edit
+
+  Page Load (1.0ms)  SELECT `pages`.* FROM `pages` INNER JOIN `admin_users_pages` ON `pages`.`id` = `admin_users_pages`.`page_id` WHERE `admin_users_pages`.`admin_user_id` = 1
+=> #<ActiveRecord::Associations::CollectionProxy [#<Page id: 2, subject_id: 1, name: "First Page", permalink: 0, posistion: 1, visible: false, created_at: "2014-07-15 09:01:24", updated_at: "2014-07-15 09:01:24">]>
+
+page.editors  --> this gives us a list of all the editors that can edit the page we picjed before.
+
+=> #<ActiveRecord::Associations::CollectionProxy [#<AdminUser id: 1, first_name: "Dajia", last_name: "Dim", email: "", username: "DajiaDim", hashed_password: nil, created_at: "2014-07-15 10:55:48", updated_at: "2014-07-15 10:55:48">]>
+
+--------------------------------------
+Many-to-many relationship/associations -- RICH (join table and new model)
+---------------------------------------
+
+usage:
+------
+
+*An object has many objects wich belong to it but not exclusively
+
+Project has_and_belongs_to_many :collaborators
+
+Collaborator has_and_belongs_to_many :projects
+
+
+
+for a rich many_to_may relationship, a join table is required
+
+	Must create the join table that will handles this relationship. We create a migration file
+
+	there is no ruby's naming convensio for join table, but prefered a name that describes that table
+
+	Must create a new model that has only belongs_to relationships between the two models and the models will have a has_many relationship with that new model.
+
+	That new model will have it's own model class
+
+
+We have two foreign keys 
+
+we write index to index both foreign keys
+
+
+a primary key column is required
+
+
+rails generate model SectionEdit --> we create the new model (and the new migration file)
+      invoke  active_record
+      create    db/migrate/20140715114355_create_section_edits.rb
+      create    app/models/section_edit.rb
+      invoke    test_unit
+      create      test/models/section_edit_test.rb
+      create      test/fixtures/section_edits.yml
+	
+επειτα πηγαίνουμε στο migration file αυτου του model και εκει τροποποιουμε το πινακα. Προθετω τις δυο στηλες με τα foreign keys και επισης προσθετω και το index
+
+επειτα τρεχω το migration -> rake db:migrate
+
+αφου γινει αυτο, παμε στα models για να προσθεσουμε τις συνδεσεις
+
+has_many και belongs_to αντίστοιχα.
+
+το belongs_to το γραφουμε στο νεο model που δημιουργησαμε (ένα για καθε πινακα που εχει το καθενα foreign key που χρησιμοποιουμε στο migration file του νεου model), ενω το has_many το γραφουμε στα reference models, σε αυτα τα οποία αναφερομαστε στον migration file του νεου model
+επειτα στο terminal
+
+me = AdminUser.find(1)  --> ψανχω να βρω τον χρηστη με id 1 
+  AdminUser Load (1.3ms)  SELECT  `admin_users`.* FROM `admin_users`  WHERE `admin_users`.`id` = 1 LIMIT 1
+=> #<AdminUser id: 1, first_name: "Dajia", last_name: "Dim", email: "", username: "DajiaDim", hashed_password: nil, created_at: "2014-07-15 10:55:48", updated_at: "2014-07-15 10:55:48">
+irb(main):002:0> 
+
+Section.all --> create an empty section array
+  Section Load (0.6ms)  SELECT `sections`.* FROM `sections`
+=> #<ActiveRecord::Relation []
+
+section = Section.create(:name => "Section One", :posistion => 1) --> create a section
+   (0.3ms)  BEGIN
+  SQL (2.7ms)  INSERT INTO `sections` (`created_at`, `name`, `posistion`, `updated_at`) VALUES ('2014-07-15 12:12:09', 'Section One', 1, '2014-07-15 12:12:09')
+   (0.4ms)  COMMIT
+=> #<Section id: 1, page_id: nil, name: "Section One", posistion: 1, visible: false, content_type: nil, content: nil, created_at: "2014-07-15 12:12:09", updated_at: "2014-07-15 12:12:09">
+
+edit = SectionEdit.new --> δημιουργω ενα νεο edit
+=> #<SectionEdit id: nil, section_id: nil, admin_user_id: nil, summary: nil, created_at: nil, updated_at: nil>
+
+
+edit.summary = "Test summary edit" --> add a summary to that edit
+
+
+
+section.section_edits --> συνδεω το section με το section_edits δημιουργω ενα empty array
+=> #<ActiveRecord::Associations::CollectionProxy []>
+
+
+section.section_edits << edit --> προσθετω την edit στην sectio_edits array
+   (0.2ms)  BEGIN
+  SQL (0.4ms)  INSERT INTO `section_edits` (`created_at`, `section_id`, `summary`, `updated_at`) VALUES ('2014-07-15 12:18:45', 1, 'Test summary edit', '2014-07-15 12:18:45')
+   (2.2ms)  COMMIT
+=> #<ActiveRecord::Associations::CollectionProxy [#<SectionEdit id: 1, section_id: 1, admin_user_id: nil, summary: "Test summary edit", created_at: "2014-07-15 12:18:45", updated_at: "2014-07-15 12:18:45">]>
+
+SOS δεν εχει editor id γιατι το edit δεν συνδεεται με καποιον editor
+
+edit.editor = me --> συνδεω το χρηστη που ειχα δημιουργησει με το edit
+=> #<AdminUser id: 1, first_name: "Dajia", last_name: "Dim", email: "", username: "DajiaDim", hashed_password: nil, created_at: "2014-07-15 10:55:48", updated_at: "2014-07-15 10:55:48">
+
+
+edit.save  --> αποθηκευω την συνδεση που εκανα πριν
+   (0.3ms)  BEGIN
+  SQL (1.2ms)  UPDATE `section_edits` SET `admin_user_id` = 1, `updated_at` = '2014-07-15 12:24:11' WHERE `section_edits`.`id` = 1
+   (1.4ms)  COMMIT
+=> true
+
+
+me.section_edits --> με το = παραπανω κανονικα δεν συνδεει τον χρηστη με το section edits (τωρα εδω το εκανε). Για να γινει η συνδεση πρεπει να γραψω και true (γραμμη 395 ) 
+  SectionEdit Load (0.5ms)  SELECT `section_edits`.* FROM `section_edits`  WHERE `section_edits`.`admin_user_id` = 1
+=> #<ActiveRecord::Associations::CollectionProxy [#<SectionEdit id: 1, section_id: 1, admin_user_id: 1, summary: "Test summary edit", created_at: "2014-07-15 12:18:45", updated_at: "2014-07-15 12:24:11">]>
+
+
+me.section_edits(true)
+  SectionEdit Load (1.7ms)  SELECT `section_edits`.* FROM `section_edits`  WHERE `section_edits`.`admin_user_id` = 1
+=> #<ActiveRecord::Associations::CollectionProxy [#<SectionEdit id: 1, section_id: 1, admin_user_id: 1, summary: "Test summary edit", created_at: "2014-07-15 12:18:45", updated_at: "2014-07-15 12:24:11">]>
+
+
+Βεβαια μπορουμε να το κανουμε με μαζικη αναθεση 
+
+SectionEdits.create(:editor => me, :section => section, summary => "lalalalala!")
+
+
+
+

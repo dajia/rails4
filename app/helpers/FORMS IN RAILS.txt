@@ -1,0 +1,81 @@
+FORMS IN RAILS
+----------------
+
+
+***HTML form***
+
+<form action="/subjects/create" method="post">
+
+  <input type="text" name="name" />
+  <input type="text" name="position" />
+  <input type="text" name="visible" />
+
+  <input type="submit" name="commit" value="Create Subject" />
+
+</form>
+
+***RAILS form***
+
+*using text_field_tag helper, we provide the field name as an argument (<%= text_field_tag('subject[name]')>)
+
+<%= form_tag(:action => "create" do %>
+
+  <%= text_field_tag('subject[name]') %> 
+  <%= text_field_tag('subject[position]') %>
+  <%= text_field_tag('subject[visible]') %>	
+  
+  <%= submit_tag("Create Subject") %>
+
+<% end %>
+
+
+*using text_field helper we specify object's name followed by attribute name (<%= text_field(:subject, :name) %>)
+
+*form_tag
+here subject's symbol is used inside text_field helper and we repeat it over and over
+
+
+<%= form_tag(:action => "create" do %>
+
+  <%= text_field(:subject, :name) %>
+  <%= text_field(:subject, :position) %>
+  <%= text_field(:subject, :visible) %>	
+  
+  <%= submit_tag("Create Subject") %>
+
+<% end %>
+
+
+
+
+*form_for
+here subject's symbol is specified as first argument in the fom_for helper (the second argument is the url hash for action).
+This says "based on subject, create a field for name/posistion/ect"
+
+<%= form_for(:subject, :url => {:action => "create"} do |f| %>
+
+  <%= f.text_field(:name) %>
+  <%= f.text_field(:position) %>
+  <%= f.text_field(:visible) %>	
+  
+  <%= submit_tag("Create Subject") %>
+
+<% end %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

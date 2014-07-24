@@ -1,0 +1,109 @@
+GENERATE MIGRATIONS
+----------------------
+
+rails generate miration 'name of migration in camelcase'
+
+ex. rails generate migration NameOfMigration
+
+
+	  invoke  active_record
+      create    db/migrate/20140708102700_do_nothing_yet.rb
+
+
+GENERATE MODEL
+------------------
+
+rails generate model 'name of model in camelcase'
+
+rails generate model User
+
+	  invoke  active_record
+      create    db/migrate/20140708103408_create_users.rb
+      create    app/models/user.rb
+      invoke    test_unit
+      create      test/models/user_test.rb
+      create      test/fixtures/users.yml
+
+
+model name ενικος line 15
+table name πληθυντικος line 14
+
+Στο db/migrate/20140708103408_create_users.rb μπορούμε να προσθέσουμε τις στήλες του πίνακα του User
+
+class CreateUsers < ActiveRecord::Migration
+  def change
+    create_table :users do |t|
+
+      t.timestamps
+    end
+  end
+end
+
+
+class CreateUsers < ActiveRecord::Migration
+  def do
+    create_table :users do |t|
+      t.colum :"name_of_colum", :type, options 
+
+      	type -> εχουμε τους παρακατω δεκα τυπους δεδομενων:
+      	        binary, boolean, date, datetime, decimal, float, integer, string, text, time							  
+      								  
+      t.colum :"fisrt_name", :string, :limit => 20	-> προσθετω στον πινακα μια στήλη της οποιας το ονομα ειναι first_name και δεχεται
+      								  strings μόνο και δεχεται 20 χαρακτηρες						  
+
+      t.type :"name_of_colum", options -> μπορούμε να παραβλεψουμε το .colum γιατι σε πινακα δημιουργω colums 						
+
+      		options -> μπορούμε να προσθέσουμε επιπλεον επιλογες όπως τον αριθμο χαρακτηρων που επτρεπουμε, default values και αλλα.  
+      		:limit => size
+      		:default => value
+      		:null => true/false
+
+      		:precision => number
+      		:scale => number
+
+
+      t.timestamps
+    end
+  end
+
+
+
+  #def up
+    #create_table :users, {:id => false} do |t| we provide the {:id => false} if we dont want to provide an id/primary key
+
+      #t.column "first_name", :string, :limit => 25
+      #t.string "last_name", :limit => 50
+      #t.string "email", :default => "", :null => false
+      #t.string "password", :limit => 40
+
+      #t.datetime "created_at" 
+      #t.datetime "updated_at"
+
+
+      #t.timestamps
+    #end
+  #end
+
+  
+  def down
+	drop_table :users
+  end
+
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

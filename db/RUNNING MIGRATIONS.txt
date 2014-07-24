@@ -1,0 +1,185 @@
+Specify the enviroment we want to target
+
+rake db:migrate RAILS_ENV= name of the enviroment we want to target (development, production, test). 
+Rails default enviroment is development, so if we work on development, we can scoip it
+
+rake db:migrate -> θε τρέξει όλες τις migrations που δεν εχουν τρεξει μεχρι τώρα
+
+
+ ΣΕ ΑΥΤΟ ΤΟ ΣΗΜΕΙΟ, ΟΤΑΝ ΤΕΛΕΙΩΣΕΙ Η ΔΙΑΔΙΚΑΣΙΑ ΤΟΥ MIGRATION, TO αρχειο schema.rb θα αυτοσυμπληρωνεται, προσθετοντας
+ ταστοιχει αυτων πινακων που δημιουργηθηκαν απο το migration.
+ Πάντα το αρχειο scηema.rb περιεχει όλες τις τρεχουσες πληροφοριες για του πινακες, αντιπροσωπευει την τρεχουσα κατασταση της database
+
+
+mysql -u "user name" -p "database name"
+
+mysql -u first_user -p simple_cms_development -> μπαινω στην βαση δεδομενων
+
+
+SHOW TABLES; -> μου δειχνει οτι πινακες εχω σε αυτην την βαση
+
+SHOW FIELDS FROM "name of the table"
+
+
+mysql> SHOW FIELDS FROM users;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| id         | int(11)      | NO   | PRI | NULL    | auto_increment |
+| fisrt_name | varchar(20)  | YES  |     | NULL    |                |
+| last_name  | varchar(20)  | YES  |     | NULL    |                |
+| email      | varchar(255) | NO   |     |         |                |
+| password   | varchar(40)  | YES  |     | NULL    |                |
+| created_at | datetime     | YES  |     | NULL    |                |
+| updated_at | datetime     | YES  |     | NULL    |                |
++------------+--------------+------+-----+---------+----------------+
+7 rows in set (0.01 sec)
+
+Ο παραπανω πινακας δεν εχει δεδομενα ακομα, απλα εχει καποια πεδια με καποια χαρακτηριστικα για καθε πεδιο
+
+mysql> SHOW FIELDS FROM schema_migrations;
++---------+--------------+------+-----+---------+-------+
+| Field   | Type         | Null | Key | Default | Extra |
++---------+--------------+------+-----+---------+-------+
+| version | varchar(255) | NO   | PRI | NULL    |       |
++---------+--------------+------+-----+---------+-------+
+1 row in set (0.00 sec)
+
+
+mysql> SELECT * FROM schema_migrations;   -> * means ALL CONTENTS 
++----------------+
+| version        |
++----------------+
+| 20140708102700 | -> this is the "id" of each migration, the primary key of each migration
+| 20140708103408 | -> this is the "id" of each migration, the primary key of each migration
++----------------+
+2 rows in set (0.00 sec)
+
+
+EXIT FROM DATABASE
+
+
+
+REVERTING TO THE VERY FIRST VERSION OF THE DATABASE, TO VERSION ZERO, BEFORE ANY MIGRATION EVER MADE
+
+simple_cms > rake db:migrate VERSION=0
+== 20140708103408 CreateUsers: reverting ======================================
+== 20140708103408 CreateUsers: reverted (0.0000s) =============================
+
+== 20140708102700 DoNothingYet: reverting =====================================
+== 20140708102700 DoNothingYet: reverted (0.0000s) ============================
+
+
+The above reverts migration IN REVERT ORDER
+
+
+mysql> SHOW TABLES;
++----------------------------------+
+| Tables_in_simple_cms_development |
++----------------------------------+
+| schema_migrations                |
++----------------------------------+
+1 row in set (0.00 sec)
+
+Ο πινακας schema_migration δημιουργειται την πρωτη φορα που τρεχουμε migrations και δεν διαγραφεται ποτε, μενει εκει, ώστε να ανανεωνεται καθε φορα που τρεχουμε μια migration
+
+EXIT DATABASE
+
+
+rake db:migrate:status -> μας δινει report σχετικα με το ποια migration ειναι up, και ποια ειναι down
+
+
+simple_cms > rake db:migrate:status
+
+database: simple_cms_development
+
+ Status   Migration ID    Migration Name
+--------------------------------------------------
+  down    20140708102700  Do nothing yet
+  down    20140708103408  Create users
+
+
+MIGRATION OF AN INDIVIDUAL MIGRATION BASED ON IT'S TIMESTAMP/MIGRATION ID
+
+  simple_cms > rake db:migrate VERSION=20140708103408
+== 20140708102700 DoNothingYet: migrating =====================================
+== 20140708102700 DoNothingYet: migrated (0.0000s) ============================
+
+== 20140708103408 CreateUsers: migrating ======================================
+-- create_table(:users)
+
+
+simple_cms > rake db:migrate:status
+
+database: simple_cms_development
+
+ Status   Migration ID    Migration Name
+--------------------------------------------------
+   up     20140708102700  Do nothing yet
+  down    20140708103408  Create users
+
+
+
+
+
+rake db:migrate -> γινεται migration σε ολα
+
+
+rake db:migrate VERSION=0 -> reverting the database to version zero, before any migrations
+
+rake db:migrate VERSION=migration id -> migrate only one migration based on the migration id
+rake db:migrate VERSION=20141204678543
+
+rake db:migrate:status -> gives the status of all migrations, which of them are up and wich of them are down
+
+rake db:migrate:up VERSION=migration id-> migrate up only one migration based on the migration id, will run only the up method
+
+
+rake db:migrate:down VERSION=migration id -> migrate down only one migration based on the migration id, will run only the down method
+
+
+rake db:migrate:redo VERSION=migration id -> migrate only one migration based on the migration id, fisrt runs the down method and imidiatetly runs the up method
+
+rake db:migrate:redo ->migrate only the LAST migration, fisrt runs the down method and imidiatetly runs the up method
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

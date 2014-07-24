@@ -1,0 +1,102 @@
+FINDING RECORDS
+
+-------------------
+Primary key finder Method
+-------------------
+
+Class name.find(primary key, usually id)
+
+Subject.find(2)
+
+#<Subject id: 2, name: "Initial Subject", posistion: 2, visible: true, created_at: "2014-07-10 12:01:42", updated_at: "2014-07-10 13:14:24">
+
+
+This returns
+	a record
+	or an error
+
+We use that method only when the object is expected to exists
+
+--------------------
+Dynamic Finders Method - Finding with column name/attributes accessors
+--------------------
+
+Class name.find_by_column name/attributes accessor
+
+Subject.find_by_id(2)
+Subject.find_by_name("First Subject") -> it looks for an exact match(case sensitive)
+Subject.find_by_position(3)
+
+If more than one matches, it display's the first.
+
+This returns
+	a record
+	or nill
+
+#<Subject id: 1, name: "Initial Subject", posistion: 1, visible: true, created_at: "2014-07-10 12:01:42", updated_at: "2014-07-10 13:14:24">
+
+
+With dynamic finders we can search by values of all columns that we have specify in migration, not only the id column.
+We use that method when the object may not exists
+
+-----------------
+Find all method
+-----------------
+
+Class name.all
+
+Subject.all
+
+This returns 
+	an array that contains all the objects of that Class
+
+subjects = Subject.all
+
+
+Gives us an ActiveRecord::Relation array
+  Subject Load (27.7ms)  SELECT `subjects`.* FROM `subjects`
+=> #<ActiveRecord::Relation [#<Subject id: 1, name: "Initial Subject", posistion: 1, visible: true, created_at: "2014-07-10 12:01:42", updated_at: "2014-07-10 13:14:24">, #<Subject id: 2, name: "Revised Subject", posistion: 2, visible: true, created_at: "2014-07-10 13:00:34", updated_at: "2014-07-10 13:37:19">, #<Subject id: 4, name: "Third Subject", posistion: nil, visible: false, created_at: "2014-07-10 14:25:44", updated_at: "2014-07-10 14:25:44">]>
+
+subjects.each do |subject|
+ puts subject.name
+end
+
+Initial Subject
+Revised Subject
+Third Subject
+
+Gives us an object
+=> [#<Subject id: 1, name: "Initial Subject", posistion: 1, visible: true, created_at: "2014-07-10 12:01:42", updated_at: "2014-07-10 13:14:24">, #<Subject id: 2, name: "Revised Subject", posistion: 2, visible: true, created_at: "2014-07-10 13:00:34", updated_at: "2014-07-10 13:37:19">, #<Subject id: 4, name: "Third Subject", posistion: nil, visible: false, created_at: "2014-07-10 14:25:44", updated_at: "2014-07-10 14:25:44">]
+
+
+-------------------
+First/last method
+-------------------
+
+Class name.first
+
+Subject.first -> θα βρει το πρώτο
+
+Gives us an array of object(s)
+=> [#<Subject id: 1, name: "Initial Subject", posistion: 1, visible: true, created_at: "2014-07-10 12:01:42", updated_at: "2014-07-10 13:14:24">]
+
+Class name.last
+
+Subject.last -> θα βρει το τελευταίο
+
+Gives us an object
+=> [#<Subject id: 4, name: "Third Subject", posistion: nil, visible: false, created_at: "2014-07-10 14:25:44", updated_at: "2014-07-10 14:25:44">]
+
+This returns
+	a record
+	or nill
+
+Όλα τα παραπανω εκτελούνται αμεσως, κάνουν αμεση κλήση στην βάση immediate database call.
+Στελνουν αμεσως ενα query στην βαση 
+
+
+
+
+
+
+

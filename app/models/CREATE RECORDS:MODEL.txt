@@ -1,0 +1,75 @@
+CREATING RECORDS 
+
+First Method
+
+name of new variable = class name.new
+
+New/save (three step process)
+
+Insatntiate object
+Set values/attributes
+Save
+
+
+instantiate object = create a new object from a class. This object also called instant of this Class
+
+Second Method
+
+Create (one step process)
+
+Instantiate object, set values, save
+
+
+FIRST METHOD
+---------------------------------
+Insatntiate object
+----------------------------------
+subject = Subject.new -> this creates a new object from Subject's Class
+
+ #<Subject id: nil, name: nil, posistion: nil, visible: false, created_at: nil, updated_at: nil> => rails gives us the attributes that the new object subject haw inherited from the Class Subject. The columns that we set on migration create these attributes, that either they have no value, or have a default value
+
+
+
+subject.new_record?
+=> true -> this tells us that the new object is created but not saved
+=> false -> this tells us that the new object is not created because it existed already in our db
+
+----------------------
+Set values/attributes
+-----------------------
+subject.name = "First Subject" -> we write the object, then the attribute we want to add then equals and the value.
+
+the attributes exists in our db and these are created from the columns that we have set in migrations
+
+Mass assignement attributes
+if we have many attributes we can set them all together, using hashes, like that:
+subject = Subject.new(:name => "First Subject", :position => 1, :visible => true)
+
+------------
+Save
+------------
+To save returns true or false
+
+subject.save => αποθηκεύω το object
+
+ subject.new_record?
+=> false
+
+subject.id -> θα δωσει την id value
+
+
+SECOND METHOD
+---------------
+Create
+---------------
+
+Create returns the object
+
+Instantiate object, set values, save
+
+name of new variable = class name.new(set attributes)
+
+subject = Subject.create(:name=> "Second Subject", :position => 2)
+
+#<Subject id: 2, name: "Second Subject", posistion: 2, visible: false, created_at: "2014-07-10 13:00:34", updated_at: "2014-07-10 13:00:34">
+irb(main):030:0>

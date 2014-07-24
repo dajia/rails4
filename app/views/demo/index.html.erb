@@ -1,0 +1,56 @@
+<h1>Demo#from index</h1>
+<p>Hello from index in Rails!</p>
+
+<a href="/demo/index">Index page 1</a> <br/>
+<%= link_to('Index page 2', {:action => 'hello'}) %>
+
+<%= link_to('Index page 3', {:controller => 'demo', :action => 'hello'}) %>
+
+<!--  line 7 i can specify ANOTHER controller, different from that i am now, andan action  -->
+
+
+
+
+<%= link_to('diff', {:action => 'index', :id => 3, :page => 5 }) %>
+
+
+
+ID: <%= params[:id]%>
+ID: <%= @id %>
+Page: <%= @page%>
+
+<hr/>
+
+
+<%= params.inspect%>
+
+<%= link_to('Roar', '#', :onclick => "jsRoar('Javascript'); return true;")%> <%# this code will execute on click%>
+
+<%= javascript_tag("jsRoar('Rails');")%><%# this code will execute on page load %>
+
+
+<% text = "');alert('Gotcha!" %>
+<%= javascript_tag("alert('You said: #{text}');") %>
+
+<%# this will give 
+"alert('You said: '); alert('Gotcha!'); 
+and it will pop up two alert windows one ours and the other by a mean user
+%>
+
+
+<%= javascript_tag("alert('You said: #{j(text})');") %>
+
+<%# this will give 
+"alert('You said: \'); alert(\'Gotcha!');
+
+j() will escape javascript so it prevent from having two windows
+
+we use j() ony to user submitted text
+
+ %>
+
+ <%= image_tag('plus_sign.png') %>
+
+ <%#= image_tag('logo.png', :size => '90x55', :alt => 'logo') %> <%# specify size and alt title %>
+
+ <%#= image_tag('logo.png', :width => 90, :height => 55) %> <%# specify width and height %>

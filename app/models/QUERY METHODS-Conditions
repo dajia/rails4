@@ -1,0 +1,157 @@
+QUERY METHODS
+
+
+------------------------------
+QUERY METHODS: Conditions
+------------------------------
+
+
+Το .find εξυπηρετει απλα αιτηματα προς την βαση
+
+Για πιο περιπλοκα αιτηματα δημιουργούμε Query Methods.
+
+query methods for setting conditions
+Με τα conditions καθοριζουμε τα κριτηρια τα οποία θα πρεπει να εχουν τα records ωστε να εμφανιστουν στα αποτελεσματα. Αυτο στην rails γινεται με την query nethod where
+
+where(conditions)
+-------------------
+Οι conditions περνόνται στην method ως argument
+
+Class name.where(conditions)
+
+Subject.where(:visible => true)
+
+this lookng for subject objects that has the visible set to true.
+
+Returns an ActiveRelation object, wich can be chained
+Αυτο το ActiveRelation object μπορει να συνδεθεί με άλλα Query methods(πχ order), επειτα το ActiveRelation θα παρει ολα αυτα τα objects και θα φτιαξει μια SQL statement    
+πχ Subject.where(:visible => true).order("position ASC")
+
+
+Αυτα τα queries δεν καλούνται αμέσως αλλα μονο οταν ζητηθουν - does not execute a darabase call immediately
+
+
+Τα arguments μπορει να ειναι 
+
+
+
+
+	hashes -> :visible => true
+		      :name => "First Subject", :visible => true
+
+			Στις hashes, καθε ξευγαρι key-value ενόνεται με AND και τα  OR, LIKE, >, < δεν χρησιμοποιουνται		
+
+			Επιστρέφει ενα Active Relation object, οχι array  
+
+
+			subjects = Subject.where(:visible => true)
+
+  			Subject Load (0.5ms)  SELECT `subjects`.* FROM `subjects`  WHERE `subjects`.`visible` = 1
+			=> #<ActiveRecord::Relation [#<Subject id: 1, name: "Initial Subject", posistion: 1, visible: true, created_at: "2014-07-10 12:01:42", updated_at: "2014-07-10 13:14:24">, #<Subject id: 2, name: "Revised Subject", posistion: 2, visible: true, created_at: "2014-07-10 13:00:34", updated_at: "2014-07-10 13:37:19">]>
+
+
+
+	strings -> "position ASC"
+		       "name = 'First Subject' AND visible = true"	
+
+
+			τα strings  χρησιμοποιουνται ως arguments  στην where method μονο όταν εχουμε static string (hard-coding) που δεν αλλαζει και οχι οταν τα δεδομενα μπορει να προερχονται απο inputs του χρηστη ή απο δεδομενα τα οποια προερχονται απο την database.
+
+
+			subjects = Subject.where("visible = true")
+
+  			Subject Load (0.8ms)  SELECT `subjects`.* FROM `subjects`  WHERE (visible = true)
+			=> #<ActiveRecord::Relation [#<Subject id: 1, name: "Initial Subject", posistion: 1, visible: true, created_at: "2014-07-10 12:01:42", updated_at: "2014-07-10 13:14:24">, #<Subject id: 2, name: "Revised Subject", posistion: 2, visible: true, created_at: "2014-07-10 13:00:34", updated_at: "2014-07-10 13:37:19">]>
+
+
+	arrays -> ["name = ? AND visible = true", "First Subject"]
+
+			όταν θελουμε να περασουμε string τοτε μπορουμε να χρησιμοποιησουμε array και στην θέση του string βαζουμε ?, έπειτα γραφουμε την τιμη, όπως φαίνεται παραπανω.
+
+			subjects = Subject.where(["visible =?", "true"])
+
+  			Subject Load (3.6ms)  SELECT `subjects`.* FROM `subjects`  WHERE (visible =' true')
+			=> #<ActiveRecord::Relation [#<Subject id: 4, name: "Third Subject", posistion: nil, visible: false, created_at: "2014-07-10 14:25:44", updated_at: "2014-07-10 14:25:44">]>
+
+
+			subjects = Subject.where(["visible =?", true])
+  			
+  			Subject Load (0.7ms)  SELECT `subjects`.* FROM `subjects`  WHERE (visible =1)
+			=> #<ActiveRecord::Relation [#<Subject id: 1, name: "Initial Subject", posistion: 1, visible: true, created_at: "2014-07-10 12:01:42", updated_at: "2014-07-10 13:14:24">, #<Subject id: 2, name: "Revised Subject", posistion: 2, visible: true, created_at: "2014-07-10 13:00:34", updated_at: "2014-07-10 13:37:19">]>
+
+
+
+
+			subjects = Subject.where(:visible => true).where(:posistion => 1) -> επιστρεφει array 
+			subjects = Subject.where(:visible => true, :posistion => 1) -> επιστρεφει array
+
+  			Subject Load (3.2ms)  SELECT `subjects`.* FROM `subjects`  WHERE `subjects`.`visible` = 1 AND `subjects`.`posistion` = 1
+			=> #<ActiveRecord::Relation [#<Subject id: 1, name: "Initial Subject", posistion: 1, visible: true, created_at: "2014-07-10 12:01:42", updated_at: "2014-07-10 13:14:24">]>
+
+
+
+			subjects = Subject.where(:visible => true, :posistion => 1).first -> επιστρεφει object, και οχι array
+
+  			Subject Load (2.6ms)  SELECT  `subjects`.* FROM `subjects`  WHERE `subjects`.`visible` = 1 AND `subjects`.`posistion` = 1  ORDER BY `subjects`.`id` ASC LIMIT 1
+			=> #<Subject id: 1, name: "Initial Subject", posistion: 1, visible: true, created_at: "2014-07-10 12:01:42", updated_at: "2014-07-10 13:14:24">
+
+
+
+-----------------------------------
+QUERY METHODS: Order, limit, offset
+-----------------------------------
+
+
+.order(sql_fragment)
+
+		θα καθορισει την σειρα ταξινόμησης των specified records. Η ταξινομηση μπορεί να είναι με βαση οποιαδηποτε στήλη/column. Επίσης η ταξινόμηση μπορει να ειναι ειτε αυξουσα ειτε φθίνουσα
+
+
+Το format για το sql_fragment είναι το παρακατω:
+table_name.column_name ASC/DESC ASC is the default
+
+Aποσαφηνιση της σειρας των tables στην sql
+
+
+-Μπορουμε να παρακάμψουμε το table_name, αν δουλευουμε με εναν πίνακα.
+
+-Αναφέρεται όταν ενώνουμε πίνακες, join tables, τότε θα πρέπει να αναφερουμε το table_names 
+
+-Επιβάλλεται όμως να το αναφερουμε όταν δουλευουε με πολλους πινακες ή οταν υπαρχουν στηλες σε διαφορετικους πινακες με ιδιο ονομα. 
+
+-Επιβάλλεται να το αναφερουμε όταν ταξινομουμε με βάση πανω απο μια στήλη, χωρίζουμε τις στήλες με κομμα.
+
+.order("subjects.visible DESC, subject.name ASC")
+
+
+
+.limit(integer)
+
+		περιοριζει τον αριθμο αποτελεσματων που θα επιστραφουν(πχ αν θελουμε να βλεπουμε τα αποτελεσματα ως σελιδες στις οποιες καθε σελιδα θα εχει 50 αποτελεσματα. Τοτε θα ορισουμε το limit(50))
+
+.offset(integer)
+ 
+		επιτρεπει να παρακαμψουμε αριθμό εγγραφων πριν επιλεγουν τα αποτελεσματα τα οποια θα μας επιστραφουν 
+		αν θελουμε να βλεπουμε τα αποτελεσματα ως σελιδες στις οποιες καθε σελιδα θα εχει 50 αποτελεσματα, αλλα θα θελαμε να δουμε ως πρωτη εγγραφη το 51ο αποτελεσμα τοτε θα ορίσουμε το .limit(50).offset(50)
+
+
+Μπορούμε να συνδιασουμε όλες τις query methods
+
+Subject.order("position ASC").limit(50).offset(50)		
+
+Subject.where(:position => 1).order("position ASC").limit(50).offset(50)
+
+
+
+subjects = Subject.where(:visible => true).order("posistion ASC").limit(1).offset(1)
+
++++++++++++++++++++++++++++++++++++++++++++
+subjects = Subject.where(:visible => true).order("subjects.posistion ASC").limit(1).offset(1)
++++++++++++++++++++++++++++++++++++++++++++
+
+  Subject Load (3.2ms)  SELECT  `subjects`.* FROM `subjects`  WHERE `subjects`.`visible` = 1  ORDER BY posistion ASC LIMIT 1 OFFSET 1
+
+=> #<ActiveRecord::Relation [#<Subject id: 2, name: "Revised Subject", posistion: 2, visible: true, created_at: "2014-07-10 13:00:34", updated_at: "2014-07-10 13:37:19">]>
+
+
+η σειρα με την οποία παραθετουμε τα queries δεν παιζει κανεναν ρολο

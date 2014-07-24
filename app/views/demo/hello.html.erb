@@ -1,0 +1,31 @@
+<h1>Demo#hello</h1>
+<p>Dajia in Rails!</p>
+
+
+<%=  1+1  %>
+
+<br/>
+
+<br/>
+<%  target = "world" %>
+<%= "Hello #{target}" %>
+<br/>
+
+<% @array.each do |n| %> <!--i can have access to instance variable that i have specified inside demo_controller.rb, in the hello action, that renders hello view-->
+	<%= n %><br/>
+<%  end  %>	
+
+<!-- links inside an erb file-->
+<!--#<%= link_to('text', 'target')%>-->
+
+
+<%=  link_to('polyptychon', 'http://www.polyptychon.gr')  %>
+
+
+<!--η παραμετρος id μπορει να αναφερθει στο route.rb οι υπολοιπες παραμετροι ελεγχονται απο την special method params
+η params επιστρεφει ενα hash, το οποίο περιεχει όλa τα GET και τα POST variables τα οποία στελνονται με το αιτημα request
+Στην μεθοδο αυτη params βαζουμε όλες τις παραμετρους ενος link, controller, action, id, name, keyword.  Η param methos δεν μαςψ επιστρεφει ενα κανονικο hash αλλα ενα hash with indifferentaccess. Δηλαδη στο hash αυτο χρησιμοποιούνται τόσο strings όσο και symbols-->
+
+<%= link_to('diff', {:action => 'index', :id => 3, :page => 5 }) %>
+
+<%= params.inspect%>

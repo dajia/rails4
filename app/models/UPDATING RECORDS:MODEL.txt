@@ -1,0 +1,47 @@
+UPDATING RECORDS 
+
+First Method
+
+Find/save (three step process)
+
+name of new variable = class name.find(object id)
+
+Find object
+Set/Alter values/attributes
+Save
+
+
+subject = Subject.find(1) -> finding the subject
+
+=> #<Subject id: 1, name: "First Subject", posistion: 1, visible: true, created_at: "2014-07-10 12:01:42", updated_at: "2014-07-10 12:01:42">
+
+subject.name = "Initial Subject" -> set/alter the values
+=> "Initial Subject"
+irb(main):035:0> subject.save -> saving changes
+   (0.2ms)  BEGIN
+  SQL (3.0ms)  UPDATE `subjects` SET `name` = 'Initial Subject', `updated_at` = '2014-07-10 13:14:24' WHERE `subjects`.`id` = 1
+   (0.4ms)  COMMIT
+=> true
+
+
+
+
+Second Method
+
+Find/update_attributes (two steps process)
+
+Find object
+Set/Alter values, save
+
+name of new variable = class name.find(object id) -> finding the subject
+
+name of the above variable.updae_attributes(set/alter values) -> set/alter the values and save
+
+
+subject = Subject.find(2)
+
+=> #<Subject id: 2, name: "Second Subject", posistion: 2, visible: false, created_at: "2014-07-10 13:00:34", updated_at: "2014-07-10 13:00:34">
+subject.update_attributes(:name => "Next Subject", :visible => true)
+ UPDATE `subjects` SET `name` = 'Next Subject', `updated_at` = '2014-07-10 13:20:42', `visible` = 1 WHERE `subjects`.`id` = 2
+=> true
+

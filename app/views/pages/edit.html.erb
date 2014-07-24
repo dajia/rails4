@@ -1,0 +1,11 @@
+<% @page_title = "Edit Page"%>
+
+<%= link_to("Back to List", {:action => "index"}, :class => 'back-link')%>
+<div class="pages edit">
+	<h2>Update Page</h2>
+	<%= form_for(:page, :url => {:action => "update", :id => @page.id}) do |f| %>
+	<%= render(:partial => "form", :locals => {:f => f}) %>
+	<%= submit_tag("Update Page") %>
+	<% end %>	
+</div>
+	

@@ -1,0 +1,69 @@
+FINDING RECORDS
+
+-------------------
+Primary key finder
+-------------------
+
+Class name.find(object's primary key (as usual is the id))
+
+Subject.find(2)
+
+This returns 
+	an object
+	or an error
+
+We use the Primary key finder when the object is expected to exists
+
+
+
+--------------------
+Dynamic finders
+--------------------
+
+With dynamic finders we can search not anly at primary's key's column but at all columns
+
+Class name.find_by_name of the column(value of the column)
+
+
+Class name.find_by_attribute accessor(value attribute accessor)
+
+Subject.find_by_id(2)
+Subject.find_by_name("First Subject") -> ψαχνει να βρει ακριβως το ιδιο ονομα case sensitive and must match exactly
+Subject.find_by_position(1)
+
+
+This returns 
+	an object
+	or nill
+
+If more than one matches, then it will return the First that it finds.
+
+
+We use Dynamic finders when we don't know if the object exists
+
+
+---------------------
+Find all method
+---------------------
+
+Class name.all
+
+This returns 
+	an array of all the objects
+
+
+----------------
+First/Last methods
+
+Class name.first
+
+Subject.first
+
+Class name.last
+
+Subject.last
+
+
+This returns 
+	an object
+	or nill
